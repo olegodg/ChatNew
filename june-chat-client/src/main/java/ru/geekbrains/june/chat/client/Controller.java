@@ -8,24 +8,31 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import ru.geekbrains.june.chat.server.Authentification;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 public class Controller {
     @FXML
     TextArea chatArea;
-
     @FXML
     TextField messageField, usernameField;
-
     @FXML
     HBox authPanel, msgPanel;
-
+    @FXML
+    HBox registredPanel;
+    @FXML
+    TextField Login;
+    @FXML
+    PasswordField regPassword;
+    @FXML
+    TextField Nick;
     @FXML
     ListView<String> clientsListView;
     @FXML
@@ -38,12 +45,24 @@ public class Controller {
 
     public void setAuthorized(boolean authorized) {
         userName.setText(name);
+        registredPanel.setVisible(true);
+        registredPanel.setManaged(true);
         msgPanel.setVisible(authorized);
         msgPanel.setManaged(authorized);
         authPanel.setVisible(!authorized);
         authPanel.setManaged(!authorized);
         clientsListView.setVisible(authorized);
         clientsListView.setManaged(authorized);
+    }
+
+    public void registration() throws SQLException {
+        if (socket == null || socket.isClosed()) {
+            connect();
+        }
+        Authentification.setNewClients(Login.getText(), regPassword.getText(), Nick.getText());
+        Login.clear();
+        regPassword.clear();
+        Nick.clear();
     }
 
     public void sendMessage() {
