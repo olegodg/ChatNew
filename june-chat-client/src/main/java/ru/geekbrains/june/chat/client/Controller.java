@@ -9,13 +9,15 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import ru.geekbrains.june.chat.server.Authentification;
-
+import java.io.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class Controller {
@@ -187,4 +189,40 @@ public class Controller {
             messageField.selectEnd();
         }
     }
+    //Логика вроде правильная
+    public void historyChat() throws IOException {
+        try {
+            File history = new File("history.txt");
+            if (!history.exists()) {
+                history.createNewFile();
+            }
+            PrintWriter fileWriter = new PrintWriter(new FileWriter(history, false));
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            bufferedWriter.write(chatArea.getText());
+            bufferedWriter.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showHistory() throws IOException {
+        File history = new File("history.txt");
+        List<String> historyList = new ArrayList<>();
+        FileInputStream inStrHistory = new FileInputStream(history);
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inStrHistory));
+        while ((bufferedReader.readLine()) != null) {
+            historyList.add(bufferedReader.readLine());
+        }
+        if (historyList.size() > 100) {
+            for (int i = historyList.size() - 100; i <= (historyList.size() - 1); i++) {
+                chatArea.appendText(historyList.get(i) + "\n");
+            }
+
+        } else {
+            for (int i = 0; i < 100; i++) {
+                System.out.println(historyList.get(i));
+            }
+        }
+    }
 }
+
