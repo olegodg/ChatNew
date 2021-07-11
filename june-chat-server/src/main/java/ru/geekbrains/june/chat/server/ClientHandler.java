@@ -22,7 +22,7 @@ public class ClientHandler {
             this.socket = socket;
             this.in = new DataInputStream(socket.getInputStream());//улучшенный входной поток данных
             this.out = new DataOutputStream(socket.getOutputStream());//улучшенный исходящий поток данных
-            new Thread(() -> logic()).start();
+            server.getClientsExecutorService().execute(() -> logic());
         } catch (IOException e) {
             e.printStackTrace();
         }
