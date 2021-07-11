@@ -5,13 +5,16 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Server {
     private List<ClientHandler> clients;//массив клиентов
-
+    private ExecutorService clientsExecutorService;
     public Server() {
         try {
             this.clients = new ArrayList<>();//создаем новый массив клиентов
+            clientsExecutorService = Executors.newCachedThreadPool();
             ServerSocket serverSocket = new ServerSocket(8189);//сохдаем новый сокет
             System.out.println("Сервер запущен. Ожидаем подключение клиентов..");
             while (true) {
@@ -21,6 +24,8 @@ public class Server {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }finally {
+            clientsExecutorService.shutdown();
         }
     }
 
@@ -74,5 +79,8 @@ public class Server {
             }
         }
         sender.sendMessage("Пользователь " + receiverUsername + " не в сети");
+    }
+    public ExecutorService getClientsExecutorService() {
+        return clientsExecutorService;
     }
 }
